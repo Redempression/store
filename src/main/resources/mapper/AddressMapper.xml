@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--
+     mapper接口和映射文件要保证两个一致：
+     1、mapper接口的全类名和映射文件的namespace一致
+     2、mapper接口中的方法的方法名要和映射文件中的sql的id保持一致
+ -->
+<!--namespace用于指定当前的映射文件和哪个接口进行映射,需要指定接口的文件路径,路径需要是包的完整路径结构-->
+<mapper namespace="com.cy.store.mapper.AddressMapper">
+
+    <!--映射规则-->
+    <resultMap id="AddressEntityMap" type="com.cy.store.entity.Address">
+        <id column="aid" property="aid"/>
+        <result column="province_name" property="provinceName"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="city_name" property="cityName"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="area_name" property="areaName"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="created_user" property="createdUser"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_user" property="modifiedUser"/>
+        <result column="modified_time" property="modifiedTime"/>
+    </resultMap>
+
+
+    <!--Integer insert(Address address);-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="aid">
+        INSERT INTO t_address (
+            uid, `name`, province_name, province_code, city_name, city_code, area_name, area_code, zip,
+            address, phone, tel,tag, is_default, created_user, created_time, modified_user, modified_time
+        ) VALUES (
+            #{uid}, #{name}, #{provinceName}, #{provinceCode}, #{cityName}, #{cityCode}, #{areaName},
+            #{areaCode}, #{zip}, #{address}, #{phone}, #{tel}, #{tag}, #{isDefault}, #{createdUser},
+            #{createdTime}, #{modifiedUser}, #{modifiedTime}
+        )
+    </insert>
+
+
+    <!--Integer countByUid(Integer uid);-->
+    <select id="countByUid" resultType="java.lang.Integer">
+        select count(*) from t_address where uid = #{uid}
+    </select>
+
+
+    <!--List<Address> findByUid(Integer uid);-->
+    <select id="findByUid" resultMap="AddressEntityMap">
+        select * from t_address where uid = #{uid}
+                                order by is_default DESC, created_time DESC
+    </select>
+
+
+    <!--Address findByAid(Integer aid);-->
+    <select id="findByAid" resultMap="AddressEntityMap">
+    select * from t_address where aid=#{aid}
+
+    </select>
+
+
+    <!--Integer updateNonDefault(Integer uid);-->
+    <update id="updateNonDefault">
+    update t_address set is_default=0 where uid=#{uid}
+
+    </update>
+
+
+    <!--
+        Integer updateDefaultByAid(
+            @Param("aid") Integer aid,
+            @Param("modifiedUser") String modifiedUser,
+            @Param("modifiedTime") Date modifiedTime);
+    -->
+    <update id="updateDefaultByAid">
+    update t_address set is_default=1,
+                        modified_user=#{modifiedUser},
+                        modified_time=#{modifiedTime}
+                    where aid=#{aid}
+    </update>
+
+    
+    <!--
+        Integer deleteByAid(@Param("aid") Integer aid);
+    -->
+    <delete id="deleteByAid" >
+        delete from t_address where aid = #{aid}
+    </delete>
+
+
+    <!--其中limit 0,1表示查询到的第一条数据(limit (n-1),pageSize),这样查询后就只会获得第一条数据-->
+    <!--Address findLastModified(Integer uid);-->
+    <select id="findLastModified" resultMap="AddressEntityMap">
+        select * from t_address where uid = #{uid}
+                                order by modified_time DESC limit 0,1
+    </select>
+
+
+    <!--Integer updateAddressByAid(Address address);-->
+    <update id="updateAddressByAid">
+        update t_address set
+                            <if test="name != null">`name`=#{name},</if>
+                            <if test="provinceName != null">province_name=#{provinceName},</if>
+                            <if test="provinceCode != null">province_code=#{provinceCode},</if>
+                            <if test="cityName != null">city_name=#{cityName},</if>
+                            <if test="cityCode != null">city_code=#{cityCode},</if>
+                            <if test="areaName != null">area_name=#{areaName},</if>
+                            <if test="areaCode != null">area_code=#{areaCode},</if>
+                            <if test="zip != null">zip=#{zip},</if>
+                            <if test="address != null">address=#{address},</if>
+                            <if test="phone != null">phone=#{phone},</if>
+                            <if test="tel != null">tel=#{tel},</if>
+                            <if test="tag != null">tag=#{tag},</if>
+                            modified_user=#{modifiedUser},
+                            modified_time=#{modifiedTime}
+                    where aid=#{aid}
+    </update>
+</mapper>

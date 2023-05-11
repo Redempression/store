@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--
+     mapper接口和映射文件要保证两个一致：
+     1、mapper接口的全类名和映射文件的namespace一致
+     2、mapper接口中的方法的方法名要和映射文件中的sql的id保持一致
+ -->
+<!--namespace用于指定当前的映射文件和哪个接口进行映射,需要指定接口的文件路径,路径需要是包的完整路径结构-->
+<mapper namespace="com.cy.store.mapper.DistrictMapper">
+    
+    <!--List<District> findByParent(String parent);-->
+    <!--  ASC 从上往下升序  -->
+    <select id="findByParent" resultType="com.cy.store.entity.District">
+        SELECT * FROM t_dict_district WHERE parent = #{parent} ORDER BY `code` ASC
+    </select>
+
+    <!--String findNameByCode(String code);-->
+    <select id="findNameByCode" resultType="java.lang.String">
+        select name from t_dict_district where `code` = #{code} ;
+    </select>
+
+
+</mapper>
