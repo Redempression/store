@@ -44,7 +44,7 @@ public class AddressController extends BaseController {
 
 
     /**
-     * 获取用户所有收货地址 --分页11111111
+     * 获取用户所有收货地址 --分页
      * @param session
      * @param pageNum 表示显示第几页数据
      * @return
